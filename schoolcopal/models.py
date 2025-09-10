@@ -48,7 +48,7 @@ class User(AbstractUser, BaseModel):
             ('parent', _('Parent')),
             ('directeur', _('Directeur')),
         ],
-        default='parent',
+        default='admin',
         verbose_name=_("Rôle")
     )
     telephone = models.CharField(

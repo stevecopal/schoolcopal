@@ -103,7 +103,7 @@ def admin_dashboard(request):
 
 def enseignant_dashboard(request):
     """Custom teacher dashboard view."""
-    if not request.user.is_authenticated or request.user.role != 'enseignant' or not request.user.is_active():
+    if not request.user.is_authenticated or request.user.role != 'enseignant' or not request.user.is_active:
         return redirect('authentication:login')
     return render(request, 'authentication/enseignant_dashboard.html', {
         'title': _('Teacher Dashboard'),
@@ -112,7 +112,7 @@ def enseignant_dashboard(request):
 
 def parent_dashboard(request):
     """Custom parent dashboard view."""
-    if not request.user.is_authenticated or request.user.role != 'parent' or not request.user.is_active():
+    if not request.user.is_authenticated or request.user.role != 'parent' or not request.user.is_active:
         return redirect('authentication:login')
     return render(request, 'authentication/parent_dashboard.html', {
         'title': _('Parent Dashboard'),
@@ -121,7 +121,7 @@ def parent_dashboard(request):
 
 def directeur_dashboard(request):
     """Custom director dashboard view."""
-    if not request.user.is_authenticated or request.user.role != 'directeur' or not request.user.is_active():
+    if not request.user.is_authenticated or request.user.role != 'directeur' or not request.user.is_active:
         return redirect('authentication:login')
     return render(request, 'authentication/directeur_dashboard.html', {
         'title': _('Director Dashboard'),
