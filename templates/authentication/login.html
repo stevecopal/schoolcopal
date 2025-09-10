@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">{% trans "Login" %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">{% trans "Login" %}</button>
+    </form>
+    <p class="mt-4 text-center">
+        <a href="{% url 'authentication:password_reset' %}" class="text-blue-500">{% trans "Forgot Password?" %}</a>
+    </p>
+</div>
+{% endblock %}

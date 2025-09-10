@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Accueil - Gestion Scolaire" %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold text-center mb-6">
+        {% trans "Bienvenue sur la plateforme de gestion scolaire" %}
+    </h1>
+
+    <p class="text-center text-gray-600 mb-8">
+        {% trans "Gérez vos élèves, enseignants, classes et paiements en toute simplicité." %}
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+            <h2 class="text-xl font-semibold mb-2">{% trans "Élèves" %}</h2>
+            <p class="text-gray-500 mb-4">{% trans "Consultez la liste des élèves et leur progression." %}</p>
+        </div>
+
+        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+            <h2 class="text-xl font-semibold mb-2">{% trans "Enseignants" %}</h2>
+            <p class="text-gray-500 mb-4">{% trans "Gérez les enseignants et leurs classes attribuées." %}</p>
+          </div>
+
+        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+            <h2 class="text-xl font-semibold mb-2">{% trans "Paiements" %}</h2>
+            <p class="text-gray-500 mb-4">{% trans "Suivez les frais de scolarité et paiements effectués." %}</p>
+       </div>
+    </div>
+</div>
+{% endblock %}
