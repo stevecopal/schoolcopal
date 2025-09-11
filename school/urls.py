@@ -3,8 +3,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('i18n/', include('django.conf.urls.i18n')),  # <-- Ajout pour set_language
-
-    path('', include('schoolcopal.urls'))
+    path('i18n/', include('django.conf.urls.i18n')),  # Pour changement de langue
+    path('admin/', admin.site.urls),  # Django Admin
+    path('', include('schoolcopal.urls')),  # URLs de l'app schoolcopal
 ]

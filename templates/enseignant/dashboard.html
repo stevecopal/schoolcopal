@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} - CopalSchool{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6">{% trans "Teacher Dashboard" %}</h2>
+    
+    {% if not assigned_class %}
+        <div class="bg-yellow-100 p-4 rounded">
+            <p>{% trans "No class assigned. Contact administrator." %}</p>
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Assigned Class -->
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Assigned Class" %}</h3>
+                <p class="text-xl">{{ assigned_class }}</p>
+                <p>{% trans "Total Students" %}: {{ total_students }}</p>
+            </div>
+            
+            <!-- Subjects -->
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Subjects" %}</h3>
+                <ul class="space-y-2">
+                    {% for subject in subjects %}
+                        <li>{{ subject.nom }}</li>
+                    {% empty %}
+                        <li>{% trans "No subjects assigned." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- Students List -->
+            <div class="bg-blue-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Students" %}</h3>
+                <ul class="space-y-2">
+                    {% for student in students %}
+                        <li>{{ student.prenom }} {{ student.nom }} - {% trans "Age" %}: {{ student.age }}</li>
+                    {% empty %}
+                        <li>{% trans "No students." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- Notes to Enter -->
+            <div class="bg-green-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Notes to Enter" %}</h3>
+                <p>{% trans "Current trimester notes" %}: {{ notes_to_enter }}</p>
+                <a href="#" class="text-green-500">{% trans "Enter Notes" %}</a>
+            </div>
+            
+            <!-- Recent Attendance -->
+            <div class="bg-yellow-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Recent Attendance" %}</h3>
+                <ul class="space-y-2">
+                    {% for attendance in recent_attendance %}
+                        <li>{{ attendance.eleve.prenom }} {{ attendance.eleve.nom }} - {{ attendance.date }}: {% if attendance.present %}{% trans "Present" %}{% else %}{% trans "Absent" %}{% endif %}</li>
+                    {% empty %}
+                        <li>{% trans "No recent attendance." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} - CopalSchool{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6">{% trans "Director Dashboard" %}</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="bg-blue-50 p-4 rounded text-center">
+            <h3 class="text-lg font-semibold">{% trans "Total Students" %}</h3>
+            <p class="text-3xl font-bold">{{ total_students }}</p>
+        </div>
+        <div class="bg-green-50 p-4 rounded text-center">
+            <h3 class="text-lg font-semibold">{% trans "Total Classes" %}</h3>
+            <p class="text-3xl font-bold">{{ total_classes }}</p>
+        </div>
+        <div class="bg-yellow-50 p-4 rounded text-center">
+            <h3 class="text-lg font-semibold">{% trans "Total Teachers" %}</h3>
+            <p class="text-3xl font-bold">{{ total_teachers }}</p>
+        </div>
+        <div class="bg-purple-50 p-4 rounded text-center">
+            <h3 class="text-lg font-semibold">{% trans "Total Parents" %}</h3>
+            <p class="text-3xl font-bold">{{ total_parents }}</p>
+        </div>
+    </div>
+    
+    <div class="bg-gray-50 p-4 rounded">
+        <h3 class="text-lg font-semibold mb-2">{% trans "School Report" %}</h3>
+        <p>{% trans "School" %}: {{ school.nom }}</p>
+        <p>{% trans "Total Students" %}: {{ recent_report.total_eleves }}</p>
+        <a href="#" class="text-blue-500">{% trans "Generate Full Report" %}</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Accueil - Gestion Scolaire" %}{% endblock %}
+{% block title %}{% trans "Home - School Management" %}{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold text-center mb-6">
-        {% trans "Bienvenue sur la plateforme de gestion scolaire" %}
+        {% trans "Welcome to the School Management Platform" %}
     </h1>
 
     <p class="text-center text-gray-600 mb-8">
-        {% trans "Gérez vos élèves, enseignants, classes et paiements en toute simplicité." %}
+        {% trans "Manage your students, teachers, classes, and payments with ease." %}
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-            <h2 class="text-xl font-semibold mb-2">{% trans "Élèves" %}</h2>
-            <p class="text-gray-500 mb-4">{% trans "Consultez la liste des élèves et leur progression." %}</p>
+            <h2 class="text-xl font-semibold mb-2">{% trans "Students" %}</h2>
+            <p class="text-gray-500 mb-4">{% trans "View the list of students and track their progress." %}</p>
         </div>
 
         <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-            <h2 class="text-xl font-semibold mb-2">{% trans "Enseignants" %}</h2>
-            <p class="text-gray-500 mb-4">{% trans "Gérez les enseignants et leurs classes attribuées." %}</p>
-          </div>
+            <h2 class="text-xl font-semibold mb-2">{% trans "Teachers" %}</h2>
+            <p class="text-gray-500 mb-4">{% trans "Manage teachers and their assigned classes." %}</p>
+        </div>
 
         <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-            <h2 class="text-xl font-semibold mb-2">{% trans "Paiements" %}</h2>
-            <p class="text-gray-500 mb-4">{% trans "Suivez les frais de scolarité et paiements effectués." %}</p>
-       </div>
+            <h2 class="text-xl font-semibold mb-2">{% trans "Payments" %}</h2>
+            <p class="text-gray-500 mb-4">{% trans "Monitor tuition fees and completed payments." %}</p>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} - CopalSchool{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6">{% trans "Parent Dashboard" %}</h2>
+    
+    {% if total_children == 0 %}
+        <p class="text-gray-600 mb-4">{% trans "No children registered." %}</p>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Children List -->
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Your Children" %}</h3>
+                <ul class="space-y-2">
+                    {% for child in children %}
+                        <li class="flex justify-between">
+                            <span>{{ child.prenom }} {{ child.nom }} ({{ child.classe }})</span>
+                            <a href="#" class="text-blue-500">{% trans "View Details" %}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- Recent Notes -->
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Recent Notes" %}</h3>
+                <ul class="space-y-2">
+                    {% for note in recent_notes %}
+                        <li>{{ note.eleve.prenom }} {{ note.eleve.nom }} - {{ note.matiere.nom }}: {{ note.valeur }}/20</li>
+                    {% empty %}
+                        <li>{% trans "No recent notes." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- Attendance -->
+            <div class="bg-blue-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Recent Attendance" %}</h3>
+                <ul class="space-y-2">
+                    {% for attendance in recent_attendance %}
+                        <li>{{ attendance.eleve.prenom }} {{ attendance.eleve.nom }} - {{ attendance.date }}: {% if attendance.present %}{% trans "Present" %}{% else %}{% trans "Absent" %}{% endif %}</li>
+                    {% empty %}
+                        <li>{% trans "No recent attendance records." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- Pending Payments -->
+            <div class="bg-red-50 p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">{% trans "Pending Payments" %}</h3>
+                {% if pending_payments %}
+                    <ul class="space-y-2">
+                        {% for payment in pending_payments %}
+                            <li>{{ payment.eleve.prenom }} {{ payment.eleve.nom }} - {{ payment.montant }} FCFA</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>{% trans "No pending payments." %}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
