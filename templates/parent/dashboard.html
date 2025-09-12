@@ -6,62 +6,91 @@
 {% block content %}
 <div class="bg-white p-6 rounded-lg shadow-md">
     <h2 class="text-2xl font-bold mb-6">{% trans "Parent Dashboard" %}</h2>
-    
-    {% if total_children == 0 %}
-        <p class="text-gray-600 mb-4">{% trans "No children registered." %}</p>
-    {% else %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Children List -->
-            <div class="bg-gray-50 p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">{% trans "Your Children" %}</h3>
-                <ul class="space-y-2">
-                    {% for child in children %}
-                        <li class="flex justify-between">
-                            <span>{{ child.prenom }} {{ child.nom }} ({{ child.classe }})</span>
-                            <a href="#" class="text-blue-500">{% trans "View Details" %}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            
-            <!-- Recent Notes -->
-            <div class="bg-gray-50 p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">{% trans "Recent Notes" %}</h3>
-                <ul class="space-y-2">
-                    {% for note in recent_notes %}
-                        <li>{{ note.eleve.prenom }} {{ note.eleve.nom }} - {{ note.matiere.nom }}: {{ note.valeur }}/20</li>
-                    {% empty %}
-                        <li>{% trans "No recent notes." %}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            
-            <!-- Attendance -->
-            <div class="bg-blue-50 p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">{% trans "Recent Attendance" %}</h3>
-                <ul class="space-y-2">
-                    {% for attendance in recent_attendance %}
-                        <li>{{ attendance.eleve.prenom }} {{ attendance.eleve.nom }} - {{ attendance.date }}: {% if attendance.present %}{% trans "Present" %}{% else %}{% trans "Absent" %}{% endif %}</li>
-                    {% empty %}
-                        <li>{% trans "No recent attendance records." %}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            
-            <!-- Pending Payments -->
-            <div class="bg-red-50 p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">{% trans "Pending Payments" %}</h3>
-                {% if pending_payments %}
-                    <ul class="space-y-2">
-                        {% for payment in pending_payments %}
-                            <li>{{ payment.eleve.prenom }} {{ payment.eleve.nom }} - {{ payment.montant }} FCFA</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>{% trans "No pending payments." %}</p>
-                {% endif %}
-            </div>
+
+    {% if not children_data %}
+        <div class="bg-yellow-100 p-4 rounded">
+            <p>{% trans "No children assigned to your account. Contact the administrator." %}</p>
         </div>
+    {% else %}
+        {% for child_data in children_data %}
+            <div class="mb-8">
+                <!-- Child Information -->
+                <div class="bg-gray-50 p-4 rounded mb-6">
+                    <h3 class="text-lg font-semibold mb-2">{% trans "Student Information" %} - {{ child_data.child.prenom }} {{ child_data.child.nom }}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p><strong>{% trans "First Name" %}:</strong> {{ child_data.child.prenom }}</p>
+                            <p><strong>{% trans "Last Name" %}:</strong> {{ child_data.child.nom }}</p>
+                            <p><strong>{% trans "Age" %}:</strong> {{ child_data.child.age }}</p>
+                        </div>
+                        <div>
+                            <p><strong>{% trans "Date of Birth" %}:</strong> {{ child_data.child.date_naissance|date:"SHORT_DATE_FORMAT" }}</p>
+                            <p><strong>{% trans "Gender" %}:</strong> {{ child_data.child.sexe }}</p>
+                            <p><strong>{% trans "Class" %}:</strong> {{ child_data.child.classe|default:"No Class Assigned" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes by Subject -->
+                <div class="bg-blue-50 p-4 rounded mb-6">
+                    <h3 class="text-lg font-semibold mb-2">{% trans "Notes by Subject" %}</h3>
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border px-4 py-2">{% trans "Subject" %}</th>
+                                <th class="border px-4 py-2">{% trans "Trimester" %}</th>
+                                <th class="border px-4 py-2">{% trans "Note" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject, notes in child_data.notes_by_subject.items %}
+                                {% for note in notes %}
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ subject.nom }}</td>
+                                        <td class="border px-4 py-2">{{ note.trimestre }}</td>
+                                        <td class="border px-4 py-2">{{ note.valeur }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ subject.nom }}</td>
+                                        <td class="border px-4 py-2" colspan="2">{% trans "No notes available." %}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center border px-4 py-2">{% trans "No subjects or notes available." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Averages by Trimester -->
+                <div class="bg-green-50 p-4 rounded">
+                    <h3 class="text-lg font-semibold mb-2">{% trans "Averages by Trimester" %}</h3>
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border px-4 py-2">{% trans "Trimester" %}</th>
+                                <th class="border px-4 py-2">{% trans "Average" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trimester, average in child_data.averages.items %}
+                                <tr>
+                                    <td class="border px-4 py-2">{{ trimester }}</td>
+                                    <td class="border px-4 py-2">{{ average }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-center border px-4 py-2">{% trans "No averages available." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
     {% endif %}
 </div>
 {% endblock %}

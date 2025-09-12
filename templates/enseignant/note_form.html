@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% if object %}{% trans "Update Note" %}{% else %}{% trans "Add Note" %}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10 max-w-lg">
+    <h1 class="text-2xl font-bold mb-6">
+        {% if object %}{% trans "Update Note" %}{% else %}{% trans "Add Note" %}{% endif %}
+    </h1>
+
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="p-3 mb-2 rounded-lg {% if message.tags == 'error' %}bg-red-200 text-red-800{% else %}bg-green-200 text-green-800{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ field.id_for_label }}">
+                    {{ field.label_tag }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                    <p class="text-gray-500 text-xs italic">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-red-600 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                {% if object %}{% trans "Update" %}{% else %}{% trans "Add" %}{% endif %}
+            </button>
+            <a href="{% url 'schoolcopal:enseignant_dashboard' %}" class="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

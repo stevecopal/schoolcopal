@@ -54,7 +54,7 @@ class User(AbstractUser, BaseModel):
     telephone = models.CharField(
         max_length=15,
         blank=True,
-        validators=[RegexValidator(regex=r'^\+237\d{8}$', message=_("Format téléphone camerounais : +237XXXXXXXX"))],
+        validators=[RegexValidator(regex=r'^\+237\d{9}$', message=_("Format téléphone camerounais : +237XXXXXXXX"))],
         verbose_name=_("Téléphone")
     )
 
@@ -124,6 +124,14 @@ class ClasseScolaire(BaseModel):
     )
     section = models.CharField(max_length=5, blank=True, verbose_name=_("Section"))
     capacite = models.IntegerField(default=50, verbose_name=_("Capacité"))
+    
+    def get_eleves(self):
+       
+        return self.eleves.filter(deleted_at__isnull=True)
+    
+    def get_matieres(self):
+        
+        return self.matieres.filter(deleted_at__isnull=True)
 
     class Meta:
         verbose_name = _("Classe Scolaire")

@@ -13,6 +13,7 @@ from schoolcopal.views.admin import views as admin_views
 from schoolcopal.views.parent import views as parent_views
 from schoolcopal.views.enseignant import views as enseignant_views
 from schoolcopal.views.directeur import views as directeur_views
+from .views.enseignant.views import enseignant_dashboard, NoteCreateView, NoteUpdateView, NoteDeleteView
 
 app_name = "schoolcopal"
 
@@ -65,7 +66,11 @@ urlpatterns = [
     path("parent/dashboard/", parent_views.parent_dashboard, name="parent_dashboard"),
 
     # ------------------- Enseignant -------------------
-    path("enseignant/dashboard/", enseignant_views.enseignant_dashboard, name="enseignant_dashboard"),
+    path('enseignant/dashboard/', enseignant_dashboard, name='enseignant_dashboard'),
+    # URLs pour les notes des enseignants
+    path('enseignant/notes/create/<int:eleve_id>/', NoteCreateView.as_view(), name='note_create'),
+    path('enseignant/notes/update/<int:pk>/', NoteUpdateView.as_view(), name='note_update'),
+    path('enseignant/notes/delete/<int:pk>/', NoteDeleteView.as_view(), name='note_delete'),
 
     # ------------------- Directeur --------------------
     path("directeur/dashboard/", directeur_views.directeur_dashboard, name="directeur_dashboard"),

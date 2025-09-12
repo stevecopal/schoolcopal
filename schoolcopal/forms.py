@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from schoolcopal.models import PasswordResetCode, User
 import uuid
+from .models import User, Ecole, ClasseScolaire, Eleve, Enseignant, Matiere, Note
 
 class CustomAuthenticationForm(AuthenticationForm):
     """Custom authentication form with translated placeholders."""
@@ -129,3 +130,17 @@ class DirecteurForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.instance.role = 'directeur'  # Force role for Directeur
+        
+class NoteForm(forms.ModelForm):
+    """Form for adding/updating Note."""
+    class Meta:
+        model = Note
+        fields = ['matiere', 'valeur', 'trimestre']
+        labels = {
+            'matiere': _('Subject'),
+            'valeur': _('Value (0-20)'),
+            'trimestre': _('Trimester'),
+        }
+        widgets = {
+            'valeur': forms.NumberInput(attrs={'step': '0.01'}),
+        }
