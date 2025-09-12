@@ -54,7 +54,7 @@
                                    class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
                                 <a href="{% url 'schoolcopal:eleve_delete' eleve.pk %}"
                                    class="text-red-500 hover:underline ml-2"
-                                   onclick="return confirm('{% trans 'Are you sure you want to delete this student?' %}')">
+                                >
                                     {% trans "Delete" %}
                                 </a>
                             </td>
@@ -92,21 +92,23 @@
                     <th class="border px-4 py-2">{% trans "Username" %}</th>
                     <th class="border px-4 py-2">{% trans "Class" %}</th>
                     <th class="border px-4 py-2">{% trans "Salary" %}</th>
+                    <th class="border px-4 py-2">{% trans "telephone" %}</th>
                     <th class="border px-4 py-2">{% trans "Actions" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for enseignant in enseignants %}
                     <tr>
-                        <td class="border px-4 py-2">{{ enseignant.username }}</td>
+                        <td class="border px-4 py-2">{{enseignant.user.get_full_name|default:enseignant.user.username}}</td>
                         <td class="border px-4 py-2">{{ enseignant.classe|default:_("No Class") }}</td>
                         <td class="border px-4 py-2">{{ enseignant.salaire }} FCFA</td>
+                        <td class="border px-4 py-2">{{ enseignant.user.telephone }}</td>
                         <td class="border px-4 py-2">
                             <a href="{% url 'schoolcopal:enseignant_update' enseignant.pk %}"
                                class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
                             <a href="{% url 'schoolcopal:enseignant_delete' enseignant.pk %}"
                                class="text-red-500 hover:underline ml-2"
-                               onclick="return confirm('{% trans 'Are you sure you want to delete this teacher?' %}')">
+                            >
                                 {% trans "Delete" %}
                             </a>
                         </td>
@@ -157,7 +159,7 @@
                                    class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
                                 <a href="{% url 'schoolcopal:matiere_delete' matiere.pk %}"
                                    class="text-red-500 hover:underline ml-2"
-                                   onclick="return confirm('{% trans 'Are you sure you want to delete this subject?' %}')">
+                                >
                                     {% trans "Delete" %}
                                 </a>
                             </td>
@@ -209,7 +211,7 @@
                                class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
                             <a href="{% url 'schoolcopal:classescolaire_delete' classe.pk %}"
                                class="text-red-500 hover:underline ml-2"
-                               onclick="return confirm('{% trans 'Are you sure you want to delete this class?' %}')">
+                            >
                                 {% trans "Delete" %}
                             </a>
                         </td>
@@ -260,7 +262,7 @@
                                class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
                             <a href="{% url 'schoolcopal:directeur_delete' directeur.pk %}"
                                class="text-red-500 hover:underline ml-2"
-                               onclick="return confirm('{% trans 'Are you sure you want to delete this director?' %}')">
+                            >
                                 {% trans "Delete" %}
                             </a>
                         </td>

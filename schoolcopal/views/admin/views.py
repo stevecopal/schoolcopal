@@ -82,6 +82,7 @@ class EleveUpdateView(UpdateView):
 
 class EleveDeleteView(DeleteView):
     model = Eleve
+    template_name = "admin/eleve_confirm_delete.html"
     success_url = reverse_lazy('schoolcopal:eleve_list')
 
     def delete(self, request, *args, **kwargs):
@@ -122,6 +123,7 @@ class EnseignantUpdateView(UpdateView):
 
 class EnseignantDeleteView(DeleteView):
     model = Enseignant
+    template_name = "admin/enseignant_confirm_delete.html"
     success_url = reverse_lazy('schoolcopal:enseignant_list')
 
     def delete(self, request, *args, **kwargs):
@@ -162,6 +164,7 @@ class MatiereUpdateView(UpdateView):
 
 class MatiereDeleteView(DeleteView):
     model = Matiere
+    template_name = "admin/matiere_confirm_delete.html"
     success_url = reverse_lazy('schoolcopal:matiere_list')
 
     def delete(self, request, *args, **kwargs):
@@ -202,6 +205,7 @@ class ClasseScolaireUpdateView(UpdateView):
 
 class ClasseScolaireDeleteView(DeleteView):
     model = ClasseScolaire
+    template_name = "admin/classescolaire_confirm_delete.html"
     success_url = reverse_lazy('schoolcopal:classescolaire_list')
 
     def delete(self, request, *args, **kwargs):
@@ -245,6 +249,7 @@ class DirecteurUpdateView(UpdateView):
 
 class DirecteurDeleteView(DeleteView):
     model = User
+    template_name = "admin/directeur_confirm_delete.html"
     success_url = reverse_lazy('schoolcopal:directeur_list')
 
     def delete(self, request, *args, **kwargs):

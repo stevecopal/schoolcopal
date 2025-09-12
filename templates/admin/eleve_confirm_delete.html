@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Delete Student" %} - CopalSchool{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <h2 class="text-2xl font-bold mb-6">{% trans "Confirm Delete Student" %}</h2>
+    <p class="mb-4">{% trans "Are you sure you want to delete the student" %} <strong>{{ object.prenom }} {{ object.nom }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex justify-between">
+            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">{% trans "Confirm" %}</button>
+            <a href="{% url 'schoolcopal:eleve_list' %}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

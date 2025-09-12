@@ -346,6 +346,8 @@ def send_credentials(sender, instance, created, **kwargs):
             f'Bonjour {instance.username},\n\n'
             f'Votre compte a été créé par l’administrateur.\n'
             f'Nom d’utilisateur: {instance.username}\n\n'
+            f'mot de passe: {instance.password}\n\n'
+
             f'Connectez-vous sur: http://yourdomain.com/auth/login/\n\n'
             f'-- L’équipe CopalSchool'
         )

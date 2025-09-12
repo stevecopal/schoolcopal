@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Teachers List" %} - CopalSchool{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6">{% trans "Teachers List" %}</h2>
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">{% trans "All Teachers" %}</h3>
+        <a href="{% url 'schoolcopal:enseignant_create' %}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">{% trans "Add Teacher" %}</a>
+    </div>
+    <table class="w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border px-4 py-2">{% trans "Username" %}</th>
+                <th class="border px-4 py-2">{% trans "Class" %}</th>
+                <th class="border px-4 py-2">{% trans "Salary" %}</th>
+                <th class="border px-4 py-2">{% trans "telephone" %}</th>
+
+                <th class="border px-4 py-2">{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enseignant in enseignants %}
+                <tr>
+                    <td class="border px-4 py-2">{{ enseignant.user.get_full_name|default:enseignant.user.username}}</td>
+                    <td class="border px-4 py-2">{{ enseignant.classe|default:"No Class" }}</td>
+                    <td class="border px-4 py-2">{{ enseignant.salaire }} FCFA</td>
+                    <td class="border px-4 py-2">{{ enseignant.user.telephone }}</td>
+
+                    <td class="border px-4 py-2">
+                        <a href="{% url 'schoolcopal:enseignant_update' enseignant.pk %}" class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
+                        <a href="{% url 'schoolcopal:enseignant_delete' enseignant.pk %}" class="text-red-500 hover:underline ml-2" >{% trans "Delete" %}</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-center border px-4 py-2">{% trans "No teachers available." %}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <div class="mt-4">
+            <nav class="flex justify-center">
+                <ul class="inline-flex space-x-2">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300">{% trans "Previous" %}</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        <li><a href="?page={{ num }}" class="{% if page_obj.number == num %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %} px-3 py-2 rounded hover:bg-gray-300">{{ num }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300">{% trans "Next" %}</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
