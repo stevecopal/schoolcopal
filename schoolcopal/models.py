@@ -101,6 +101,18 @@ class Ecole(BaseModel):
     def generate_rapport(self):
         total_eleves = self.eleves.filter(deleted_at__isnull=True).count()
         return {"nom": self.nom, "total_eleves": total_eleves}
+    
+    @classmethod
+    def get_default_ecole(cls):
+        """Return the first active school or create a default one if none exists."""
+        ecole = cls.objects.filter(deleted_at__isnull=True).first()
+        if not ecole:
+            ecole = cls.objects.create(
+                nom="Default School",
+                type="publique",
+                adresse="Default Address",
+            )
+        return ecole
 
 
 class ClasseScolaire(BaseModel):

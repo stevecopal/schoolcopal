@@ -63,3 +63,69 @@ class VerificationCodeForm(forms.Form):
         except (ValueError, PasswordResetCode.DoesNotExist):
             raise ValidationError(_("Invalid verification code."))
         return code
+    
+from .models import Eleve, Enseignant, Matiere, ClasseScolaire, User
+
+class EleveForm(forms.ModelForm):
+    """Form for creating/updating Eleve."""
+    class Meta:
+        model = Eleve
+        fields = ['ecole', 'classe', 'nom', 'prenom', 'age', 'date_naissance', 'sexe', 'parent_id']
+        labels = {
+            'ecole': _('School'),
+            'classe': _('Class'),
+            'nom': _('Last Name'),
+            'prenom': _('First Name'),
+            'age': _('Age'),
+            'date_naissance': _('Birth Date'),
+            'sexe': _('Gender'),
+            'parent_id': _('Parent'),
+        }
+
+class EnseignantForm(forms.ModelForm):
+    """Form for creating/updating Enseignant."""
+    class Meta:
+        model = Enseignant
+        fields = ['classe', 'salaire']
+        labels = {
+            'classe': _('Assigned Class'),
+            'salaire': _('Salary'),
+        }
+
+class MatiereForm(forms.ModelForm):
+    """Form for creating/updating Matiere."""
+    class Meta:
+        model = Matiere
+        fields = ['classe', 'nom', 'description']
+        labels = {
+            'classe': _('Class'),
+            'nom': _('Subject Name'),
+            'description': _('Description'),
+        }
+
+class ClasseScolaireForm(forms.ModelForm):
+    """Form for creating/updating ClasseScolaire."""
+    class Meta:
+        model = ClasseScolaire
+        fields = ['ecole', 'niveau', 'section', 'capacite']
+        labels = {
+            'ecole': _('School'),
+            'niveau': _('Level'),
+            'section': _('Section'),
+            'capacite': _('Capacity'),
+        }
+
+class DirecteurForm(forms.ModelForm):
+    """Form for creating/updating Directeur (User with role='directeur')."""
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'telephone']
+        labels = {
+            'username': _('Username'),
+            'email': _('Email'),
+            'telephone': _('Telephone'),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.instance.role = 'directeur'  # Force role for Directeur
