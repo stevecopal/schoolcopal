@@ -1,16 +1,46 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Add/Edit Student" %} - CopalSchool{% endblock %}
+{% block title %}
+  {% if form.instance.pk %}
+    {% trans "Edit Student" %}
+  {% else %}
+    {% trans "Add Student" %}
+  {% endif %}
+{% endblock %}
 
 {% block content %}
-<div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-    <h2 class="text-2xl font-bold mb-6">{% trans "Add/Edit Student" %}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">{% trans "Save" %}</button>
-    </form>
-    <a href="{% url 'schoolcopal:eleve_list' %}" class="text-blue-500 mt-4 inline-block hover:underline">{% trans "Back to Students List" %}</a>
-</div>
+<h2>
+  {% if form.instance.pk %}
+    {% trans "Edit Student" %}
+  {% else %}
+    {% trans "Add Student" %}
+  {% endif %}
+</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <fieldset class="mb-4">
+        <legend>{% trans "Student Information" %}</legend>
+        <div class="mb-3">{{ form.ecole.label_tag }} {{ form.ecole }} {{ form.ecole.errors }}</div>
+        <div class="mb-3">{{ form.classe.label_tag }} {{ form.classe }} {{ form.classe.errors }}</div>
+        <div class="mb-3">{{ form.nom.label_tag }} {{ form.nom }} {{ form.nom.errors }}</div>
+        <div class="mb-3">{{ form.prenom.label_tag }} {{ form.prenom }} {{ form.prenom.errors }}</div>
+        <div class="mb-3">{{ form.age.label_tag }} {{ form.age }} {{ form.age.errors }}</div>
+        <div class="mb-3">{{ form.date_naissance.label_tag }} {{ form.date_naissance }} {{ form.date_naissance.errors }}</div>
+        <div class="mb-3">{{ form.sexe.label_tag }} {{ form.sexe }} {{ form.sexe.errors }}</div>
+    </fieldset>
+
+    <fieldset class="mb-4">
+        <legend>{% trans "Parent Information" %}</legend>
+        <div class="mb-3">{{ form.parent_name.label_tag }} {{ form.parent_name }} {{ form.parent_name.errors }}</div>
+        <div class="mb-3">{{ form.parent_email.label_tag }} {{ form.parent_email }} {{ form.parent_email.errors }}</div>
+        <div class="mb-3">{{ form.parent_phone.label_tag }} {{ form.parent_phone }} {{ form.parent_phone.errors }}</div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
+    <a href="{% url 'schoolcopal:eleve_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+</form>
 {% endblock %}

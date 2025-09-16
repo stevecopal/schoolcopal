@@ -54,7 +54,7 @@ class User(AbstractUser, BaseModel):
     telephone = models.CharField(
         max_length=15,
         blank=True,
-        validators=[RegexValidator(regex=r'^\+237\d{9}$', message=_("Format téléphone camerounais : +237XXXXXXXX"))],
+        validators=[RegexValidator(regex=r'^\6\d{8}$', message=_("Format téléphone camerounais : +237XXXXXXXX"))],
         verbose_name=_("Téléphone")
     )
 

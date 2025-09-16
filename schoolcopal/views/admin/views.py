@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 
 @login_required
 def admin_dashboard(request):
@@ -77,8 +78,34 @@ class EleveCreateView(CreateView):
     success_url = reverse_lazy('schoolcopal:eleve_list')
 
     def form_valid(self, form):
-        messages.success(self.request, _('Student created successfully.'))
-        return super().form_valid(form)
+        """
+        Crée un utilisateur Parent puis enregistre l'élève en le liant au parent.
+        """
+        # Infos du parent
+        parent_name = form.cleaned_data.get("parent_name")
+        parent_email = form.cleaned_data.get("parent_email")
+        parent_phone = form.cleaned_data.get("parent_phone")
+
+        # Génération d’un mot de passe aléatoire
+        raw_password = User.objects.make_random_password()
+
+        parent_user = User(
+            username=parent_email,
+            email=parent_email,
+            telephone=parent_phone,
+            role="parent",
+            password=make_password(raw_password),
+        )
+        parent_user._raw_password = raw_password  # Pour le signal d’envoi d’email
+        parent_user.save()
+
+        # Création de l’élève lié au parent
+        eleve = form.save(commit=False)
+        eleve.parent_id = parent_user   # ⚠️ c’est bien parent_id
+        eleve.save()
+
+        messages.success(self.request, _("Student and parent created successfully."))
+        return redirect(self.success_url)
 
 class EleveUpdateView(UpdateView):
     model = Eleve
@@ -86,8 +113,37 @@ class EleveUpdateView(UpdateView):
     template_name = 'admin/eleve_form.html'
     success_url = reverse_lazy('schoolcopal:eleve_list')
 
+    def get_initial(self):
+        """
+        Pré-remplit les champs du parent dans le formulaire.
+        """
+        initial = super().get_initial()
+        eleve = self.get_object()
+        parent = getattr(eleve, "parent_id", None)
+        if parent:
+            initial.update({
+                "parent_name": parent.username,  # ou un autre champ pour le nom
+                "parent_email": parent.email,
+                "parent_phone": parent.telephone,
+            })
+        return initial
+
     def form_valid(self, form):
-        messages.success(self.request, _('Student updated successfully.'))
+        """
+        Met à jour l'élève et son parent.
+        """
+        eleve = form.save(commit=False)
+
+        parent = eleve.parent_id
+        if parent:
+            parent.username = form.cleaned_data.get("parent_name")
+            parent.email = form.cleaned_data.get("parent_email")
+            parent.telephone = form.cleaned_data.get("parent_phone")
+            parent.save()
+
+        eleve.save()
+
+        messages.success(self.request, _("Student and parent updated successfully."))
         return super().form_valid(form)
 
 class EleveDeleteView(DeleteView):
@@ -139,14 +195,48 @@ class EnseignantCreateView(CreateView):
         return redirect(self.success_url)
 
 class EnseignantUpdateView(UpdateView):
+    """
+    Update view for teacher (Enseignant) with User data prefilled.
+    """
     model = Enseignant
     form_class = EnseignantForm
-    template_name = 'admin/enseignant_form.html'
-    success_url = reverse_lazy('schoolcopal:enseignant_list')
+    template_name = "admin/enseignant_form.html"
+    success_url = reverse_lazy("schoolcopal:enseignant_list")
+
+    def get_initial(self):
+        """Pré-remplit les champs liés au User dans le formulaire."""
+        initial = super().get_initial()
+        enseignant = self.get_object()
+        if hasattr(enseignant, "user") and enseignant.user:
+            initial.update({
+                "username": enseignant.user.username,
+                "email": enseignant.user.email,
+                "telephone": enseignant.user.telephone,
+                "first_name": enseignant.user.first_name,
+                "last_name": enseignant.user.last_name,
+            })
+        return initial
 
     def form_valid(self, form):
-        messages.success(self.request, _('Teacher updated successfully.'))
-        return super().form_valid(form)
+        enseignant = form.save(commit=False)
+
+        if hasattr(enseignant, "user") and enseignant.user:
+            user = enseignant.user
+            user.username = form.cleaned_data.get("username")
+            user.email = form.cleaned_data.get("email")
+            user.telephone = form.cleaned_data.get("telephone")
+            user.first_name = form.cleaned_data.get("first_name")
+            user.last_name = form.cleaned_data.get("last_name")
+
+            pwd1 = form.cleaned_data.get("password1")
+            if pwd1:  # on change le mot de passe seulement si un nouveau est fourni
+                user.set_password(pwd1)
+
+            user.save()
+
+        enseignant.save()
+        messages.success(self.request, _("Teacher updated successfully."))
+        return redirect(self.success_url)
 
 class EnseignantDeleteView(DeleteView):
     model = Enseignant
@@ -361,7 +451,6 @@ class AdminCreateView(AdminRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-# Modifier un admin
 class AdminUpdateView(AdminRequiredMixin, UpdateView):
     model = User
     form_class = AdminForm
@@ -372,28 +461,41 @@ class AdminUpdateView(AdminRequiredMixin, UpdateView):
         return User.objects.filter(role='admin', deleted_at__isnull=True)
 
     def form_valid(self, form):
-        instance = form.save(commit=False)
+        user = self.get_object()
+
+        # Met à jour les champs du modèle
+        user.username = form.cleaned_data['username']
+        user.email = form.cleaned_data['email']
+        user.telephone = form.cleaned_data['telephone']
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+
+        # Mot de passe uniquement si renseigné
         pwd = form.cleaned_data.get("password1")
         if pwd:
-            instance.set_password(pwd)
-            instance._raw_password = pwd
+            user.set_password(pwd)
+            user._raw_password = pwd
 
-            # Send email with new credentials if password changed
+            # Envoi mail si mot de passe changé
             subject = _('Your Admin Password has been Updated')
             message = _(
-                f'Hello {instance.username},\n\n'
+                f'Hello {user.username},\n\n'
                 f'Your admin account password has been updated.\n'
-                f'Username: {instance.username}\n'
+                f'Username: {user.username}\n'
                 f'New Password: {pwd}\n\n'
                 f'Login here: http://yourdomain.com/auth/login/\n\n'
                 f'-- CopalSchool Team'
             )
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [instance.email], fail_silently=True)
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=True)
 
-        instance.save()
+        user.save()
         messages.success(self.request, _("Admin updated successfully."))
-        return super().form_valid(form)
 
+        return redirect(self.success_url)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _("Please correct the errors below."))
+        return super().form_invalid(form)
 
 # Supprimer un admin (soft delete)
 class AdminDeleteView(AdminRequiredMixin, DeleteView):
