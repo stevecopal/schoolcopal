@@ -237,6 +237,8 @@ class Note(BaseModel):
     matiere = models.ForeignKey(Matiere, on_delete=models.CASCADE, related_name='notes', verbose_name=_("Matière"))
     valeur = models.DecimalField(max_digits=4, decimal_places=2, verbose_name=_("Note (0-20)"))
     trimestre = models.IntegerField(choices=[(1, '1er'), (2, '2e'), (3, '3e')], verbose_name=_("Trimestre"))
+    sequence = models.IntegerField(choices=[(1, 'Séquence 1'), (2, 'Séquence 2'), (3, 'Séquence 3'),(4, 'Séquence 4'), (5, 'Séquence 5'), (6, 'Séquence 6')], null=True, blank=True)
+
     enseignant = models.ForeignKey(
         Enseignant,
         on_delete=models.SET_NULL,
@@ -341,12 +343,13 @@ class PasswordResetCode(BaseModel):
 @receiver(post_save, sender=User)
 def send_credentials(sender, instance, created, **kwargs):
     if created and instance.role != 'admin':
+        raw_password = getattr(instance, "_raw_password", None)
         subject = _('Bienvenue sur CopalSchool - Vos identifiants')
         message = _(
             f'Bonjour {instance.username},\n\n'
-            f'Votre compte a été créé par l’administrateur.\n'
+            f'Votre compte a été créé par l’administration.\n'
             f'Nom d’utilisateur: {instance.username}\n\n'
-            f'mot de passe: {instance.password}\n\n'
+            f"Mot de passe : {raw_password or '(non disponible)'}\n\n"
 
             f'Connectez-vous sur: http://yourdomain.com/auth/login/\n\n'
             f'-- L’équipe CopalSchool'

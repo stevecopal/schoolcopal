@@ -1,53 +1,47 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}
-{% if object %}{% trans "Update Note" %}{% else %}{% trans "Add Note" %}{% endif %}
-{% endblock %}
+{% block title %}{% trans "Add/Edit Note" %} - CopalSchool{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-10 max-w-lg">
-    <h1 class="text-2xl font-bold mb-6">
-        {% if object %}{% trans "Update Note" %}{% else %}{% trans "Add Note" %}{% endif %}
-    </h1>
-
-    {% if messages %}
-        <div class="mb-4">
-            {% for message in messages %}
-                <div class="p-3 mb-2 rounded-lg {% if message.tags == 'error' %}bg-red-200 text-red-800{% else %}bg-green-200 text-green-800{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+<div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <h2 class="text-2xl font-bold mb-6">{% trans "Add/Edit Note" %}</h2>
+    {% if form.errors %}
+        <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+            <p>{% trans "Please correct the errors below:" %}</p>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
         </div>
     {% endif %}
-
-    <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form method="post" class="space-y-4">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-
-        {% for field in form %}
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ field.id_for_label }}">
-                    {{ field.label_tag }}
-                </label>
-                {{ field }}
-                {% if field.help_text %}
-                    <p class="text-gray-500 text-xs italic">{{ field.help_text }}</p>
-                {% endif %}
-                {% for error in field.errors %}
-                    <p class="text-red-600 text-xs mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-
-        <div class="flex items-center justify-between">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                {% if object %}{% trans "Update" %}{% else %}{% trans "Add" %}{% endif %}
-            </button>
-            <a href="{% url 'schoolcopal:enseignant_dashboard' %}" class="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800">
-                {% trans "Cancel" %}
-            </a>
+        <div>
+            <label for="{{ form.eleve.id_for_label }}" class="block text-sm font-medium text-gray-700">{% trans "Student" %}</label>
+            {{ form.eleve }}
         </div>
+        <div>
+            <label for="{{ form.matiere.id_for_label }}" class="block text-sm font-medium text-gray-700">{% trans "Subject" %}</label>
+            {{ form.matiere }}
+        </div>
+        <div>
+            <label for="{{ form.valeur.id_for_label }}" class="block text-sm font-medium text-gray-700">{% trans "Value (0-20)" %}</label>
+            {{ form.valeur }}
+        </div>
+        <div>
+            <label for="{{ form.trimestre.id_for_label }}" class="block text-sm font-medium text-gray-700">{% trans "Trimester" %}</label>
+            {{ form.trimestre }}
+        </div>
+        <div>
+            <label for="{{ form.sequence.id_for_label }}" class="block text-sm font-medium text-gray-700">{% trans "Sequence" %}</label>
+            {{ form.sequence }}
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">{% trans "Save" %}</button>
     </form>
+    <a href="{% url 'schoolcopal:enseignant_dashboard' %}" class="text-blue-500 mt-4 inline-block hover:underline">{% trans "Back to Dashboard" %}</a>
 </div>
 {% endblock %}

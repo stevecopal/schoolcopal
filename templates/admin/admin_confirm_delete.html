@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Delete Admin" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Confirm Delete Admin" %}</h2>
+<p>{% trans "Are you sure you want to delete" %} {{ object.username }}?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+    <a href="{% url 'schoolcopal:admin_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+</form>
+{% endblock %}

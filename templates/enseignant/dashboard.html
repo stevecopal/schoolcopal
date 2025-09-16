@@ -6,7 +6,7 @@
 {% block content %}
 <div class="bg-white p-6 rounded-lg shadow-md">
     <h2 class="text-2xl font-bold mb-6">{% trans "Teacher Dashboard" %}</h2>
-    
+
     {% if not assigned_class %}
         <div class="bg-yellow-100 p-4 rounded">
             <p>{% trans "No class assigned. Contact administrator." %}</p>
@@ -19,7 +19,7 @@
                 <p class="text-xl">{{ assigned_class }}</p>
                 <p>{% trans "Total Students" %}: {{ total_students }}</p>
             </div>
-            
+
             <!-- Subjects -->
             <div class="bg-gray-50 p-4 rounded">
                 <h3 class="text-lg font-semibold mb-2">{% trans "Subjects" %}</h3>
@@ -31,36 +31,69 @@
                     {% endfor %}
                 </ul>
             </div>
-            
-            <!-- Students List -->
-            <div class="bg-blue-50 p-4 rounded">
+
+            <!-- Students List with All Info, Notes, and Averages -->
+            <div class="bg-blue-50 p-4 rounded col-span-2">
                 <h3 class="text-lg font-semibold mb-2">{% trans "Students" %}</h3>
-                <ul class="space-y-2">
-                    {% for student in students %}
-                        <li>{{ student.prenom }} {{ student.nom }} - {% trans "Age" %}: {{ student.age }}</li>
-                    {% empty %}
-                        <li>{% trans "No students." %}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            
-            <!-- Notes to Enter -->
-            <div class="bg-green-50 p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">{% trans "Notes to Enter" %}</h3>
-                <p>{% trans "Current trimester notes" %}: {{ notes_to_enter }}</p>
-                <a href="#" class="text-green-500">{% trans "Enter Notes" %}</a>
-            </div>
-            
-            <!-- Recent Attendance -->
-            <div class="bg-yellow-50 p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">{% trans "Recent Attendance" %}</h3>
-                <ul class="space-y-2">
-                    {% for attendance in recent_attendance %}
-                        <li>{{ attendance.eleve.prenom }} {{ attendance.eleve.nom }} - {{ attendance.date }}: {% if attendance.present %}{% trans "Present" %}{% else %}{% trans "Absent" %}{% endif %}</li>
-                    {% empty %}
-                        <li>{% trans "No recent attendance." %}</li>
-                    {% endfor %}
-                </ul>
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border px-4 py-2">{% trans "Student Info" %}</th>
+                            <th class="border px-4 py-2">{% trans "Notes by Subject, Trimester, Sequence" %}</th>
+                            <th class="border px-4 py-2">{% trans "Averages" %}</th>
+                            <th class="border px-4 py-2">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td class="border px-4 py-2">
+                                    <p><strong>{% trans "Name" %}:</strong> {{ student.prenom }} {{ student.nom }}</p>
+                                    <p><strong>{% trans "Age" %}:</strong> {{ student.age }}</p>
+                                    <p><strong>{% trans "Date of Birth" %}:</strong> {{ student.date_naissance|date:"SHORT_DATE_FORMAT" }}</p>
+                                    <p><strong>{% trans "Gender" %}:</strong> {{ student.sexe }}</p>
+                                </td>
+                                <td class="border px-4 py-2">
+                                    {% for subject, trimesters in notes_by_student.student.items %}
+                                        <p><strong>{{ subject.nom }}</strong></p>
+                                        {% for trimestre, notes in trimesters.items %}
+                                            <p>{% trans "Trimester" %} {{ trimestre }}:</p>
+                                            {% for note in notes %}
+                                                <p>Séquence {{ note.sequence }}: {{ note.valeur }} 
+                                                    <a href="{% url 'schoolcopal:note_update' note.pk %}" class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
+                                                    <a href="{% url 'schoolcopal:note_delete' note.pk %}" class="text-red-500 hover:underline">{% trans "Delete" %}</a>
+                                                </p>
+                                            {% empty %}
+                                                <p>{% trans "No notes for this trimester." %}</p>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% empty %}
+                                        <p>{% trans "No notes available." %}</p>
+                                    {% endfor %}
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <p><strong>{% trans "By Trimester" %}:</strong></p>
+                                    {% for trimester, avg in averages_by_student.student.by_trimester.items %}
+                                        <p>{{ trimester }}: {{ avg }}</p>
+                                    {% endfor %}
+                                    <p><strong>{% trans "By Sequence" %}:</strong></p>
+                                    {% for trimester, sequences in averages_by_student.student.by_sequence.items %}
+                                        {% for sequence, avg in sequences.items %}
+                                            <p>{{ trimester }} - Séquence {{ sequence }}: {{ avg }}</p>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <a href="{% url 'schoolcopal:note_create' student.id %}"
+                                                class="text-green-500 hover:underline">
+                                                    {% trans "Add Note" %}
+                                    </a>                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="4" class="text-center border px-4 py-2">{% trans "No students." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     {% endif %}

@@ -61,6 +61,12 @@ urlpatterns = [
     path("school-admin/directeurs/create/", admin_views.DirecteurCreateView.as_view(), name="directeur_create"),
     path("school-admin/directeurs/update/<pk>/", admin_views.DirecteurUpdateView.as_view(), name="directeur_update"),
     path("school-admin/directeurs/delete/<pk>/", admin_views.DirecteurDeleteView.as_view(), name="directeur_delete"),
+    
+    #admin
+    path('admins/', admin_views.AdminListView.as_view(), name='admin_list'),
+    path('admins/create/', admin_views.AdminCreateView.as_view(), name='admin_create'),
+    path('admins/<int:pk>/update/', admin_views.AdminUpdateView.as_view(), name='admin_update'),
+    path('admins/<int:pk>/delete/', admin_views.AdminDeleteView.as_view(), name='admin_delete'),
 
     # ---------------------- Parent --------------------
     path("parent/dashboard/", parent_views.parent_dashboard, name="parent_dashboard"),

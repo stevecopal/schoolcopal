@@ -277,6 +277,55 @@
             </tbody>
         </table>
     </section>
+    <!-- =======================
+         ADMINS
+    ======================== -->
+    <section class="bg-gray-50 p-4 rounded mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">{% trans "Admins List" %}</h3>
+            <a href="{% url 'schoolcopal:admin_create' %}"
+               class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                {% trans "Add Admin" %}
+            </a>
+        </div>
+        <a href="{% url 'schoolcopal:admin_list' %}" class="text-blue-500 mb-2 inline-block">
+            {% trans "View All Admins" %}
+        </a>
+
+        <table class="w-full border-collapse border border-gray-300">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="border px-4 py-2">{% trans "Username" %}</th>
+                    <th class="border px-4 py-2">{% trans "Email" %}</th>
+                    <th class="border px-4 py-2">{% trans "Telephone" %}</th>
+                    <th class="border px-4 py-2">{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in admins %}
+                    <tr>
+                        <td class="border px-4 py-2">{{ admin.username }}</td>
+                        <td class="border px-4 py-2">{{ admin.email }}</td>
+                        <td class="border px-4 py-2">{{ admin.telephone|default:"N/A" }}</td>
+                        <td class="border px-4 py-2">
+                            <a href="{% url 'schoolcopal:admin_update' admin.pk %}"
+                               class="text-blue-500 hover:underline">{% trans "Edit" %}</a>
+                            <a href="{% url 'schoolcopal:admin_delete' admin.pk %}"
+                               class="text-red-500 hover:underline ml-2">
+                                {% trans "Delete" %}
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center border px-4 py-2">
+                            {% trans "No admins found." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
 
     <!-- =======================
          STATISTICS CARDS
@@ -308,6 +357,15 @@
             <p class="text-3xl font-bold">{{ total_classes }}</p>
             <a href="{% url 'schoolcopal:classescolaire_list' %}" class="text-blue-500">
                 {% trans "Manage Classes" %}
+            </a>
+        </div>
+        
+
+        <div class="bg-red-50 p-4 rounded text-center">
+            <h3 class="text-lg font-semibold">{% trans "Total Admins" %}</h3>
+            <p class="text-3xl font-bold">{{ total_admins }}</p>
+            <a href="{% url 'schoolcopal:admin_list' %}" class="text-blue-500">
+                {% trans "Manage Admins" %}
             </a>
         </div>
     </div>
